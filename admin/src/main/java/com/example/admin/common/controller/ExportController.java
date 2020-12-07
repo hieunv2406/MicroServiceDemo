@@ -11,8 +11,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletContext;
@@ -30,8 +30,8 @@ public class ExportController {
     @Autowired
     private EmployeeBusiness employeeBusiness;
 
-    @GetMapping("/files/{key}")
-    public ResponseEntity<Resource> getFile(@PathVariable("key") String key) throws Exception {
+    @GetMapping("/export")
+    public ResponseEntity<Resource> getFile(@RequestParam String key) throws Exception {
         File file = null;
         switch (key) {
             case "EMPLOYEE_MANAGER":
