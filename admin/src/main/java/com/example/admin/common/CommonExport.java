@@ -280,51 +280,76 @@ public class CommonExport {
                                                         more.add(valueStr);
                                                     }
                                                 }
-//                                                if ("NUMBER".equals(head.getStyleFormat())) {
-//                                                    double numberValue = replateNumberValue(replate[0], m, more, s);
-//                                                    if () {
-//
-//                                                    } else if () {
-//
-//                                                    } else {
-//
-//                                                    }
-//                                                } else {
-//
-//                                                }
+                                                if ("NUMBER".equals(head.getStyleFormat())) {
+                                                    double numberValue = replateNumberValue(replate[0], m, more, s);
+                                                    if (Double.compare(numberValue, -888) == 0) {
+                                                        cell.setCellValue(" ");
+                                                    } else if (Double.compare(numberValue, -999) == 0) {
+                                                        cell.setCellValue(" ");
+                                                    } else {
+                                                        cell.setCellValue(numberValue);
+                                                    }
+                                                } else {
+                                                    cell.setCellValue(replateStringValue(replate[0], m, more, s));
+                                                }
                                                 s++;
+                                            } else {
+                                                String subValue = "";
+                                                for (Field subf : firstRow.getClass().getDeclaredFields()) {
+                                                    subf.setAccessible(true);
+                                                    if (subf.getName().equals(sub)) {
+                                                        String[] arrSub = (subf.get(obj) == null ? null : subf.get(obj).toString().split(item.getSplitChar()));
+                                                        subValue = arrSub[m];
+                                                    }
+                                                }
+                                                if ("NUMBER".equals(head.getStyleFormat())) {
+                                                    if (!DataUtil.isNullOrEmpty(subValue)) {
+                                                        cell.setCellValue(Double.valueOf(subValue));
+                                                    } else {
+                                                        cell.setCellValue(DataUtil.isNullOrEmpty(subValue) ? "" : subValue);
+                                                    }
+                                                } else {
+                                                    if (DataUtil.isNullOrEmpty(subValue)) {
+                                                        cell.setCellValue("");
+                                                    } else if (subValue.length() > 32767) {
+                                                        cell.setCellValue(subValue.substring(0, 32766));
+                                                    } else {
+                                                        cell.setCellValue(subValue);
+                                                    }
+                                                }
                                             }
-//                                            else {
-//                                                for () {
-//                                                    if () {
-//
-//                                                    }
-//                                                }
-//                                                if () {
-//                                                    if () {
-//
-//                                                    } else {
-//
-//                                                    }
-//                                                } else {
-//                                                    if () {
-//
-//                                                    } else if () {
-//
-//                                                    } else {
-//
-//                                                    }
-//                                                }
-//                                            }
+                                            if ("CENTER".equals(align)) {
+//                                                cell.setCellStyle(cellStyleCenter);
+                                            }
+                                            if ("LEFT".equals(align)) {
+//                                                cell.setCellStyle(cellStyleCenter);
+                                            }
+                                            if ("RIGHT".equals(align)) {
+//                                                cell.setCellStyle(cellStyleCenter);
+                                            }
                                             j++;
                                         }
+                                    }else {
+                                        if (!DataUtil.isNullOrEmpty(item.getCustomColumnWidth())){
+                                            if (j>0){
+                                                j++;
+                                            }
+                                            cell= row.createCell(j+1);
+                                        }else {
+                                            cell = row.createCell(j+1);
+                                        }
+                                        String[] replace = head.getReplace();
+                                        if (!DataUtil.isNullOrEmpty(replace)){
+                                            Object valueReplace = mapField.get(replace[1]).get(obj);
+                                            List<String> more = new ArrayList<>();
+                                            if (replace.length >2){
+                                                for (int n = 2; n< replace.length; n++){
+                                                    Object objStr = mapField.get(replace[n]).get(obj);
+                                                    String valueStr = objStr == null ? "": objStr.toString();
+                                                }
+                                            }
+                                        }
                                     }
-//                                    else {
-//
-//                                    }
-//                                if (!DataUtil.isNullOrEmpty(item.getCustomColumnWidth()) && item.getCustomColumnWidth().length>0){
-//
-//                                }
                                 }
                             }
                         }
