@@ -1,7 +1,6 @@
 package com.example.admin.common.controller;
 
 import com.example.admin.business.EmployeeBusiness;
-import com.example.admin.common.service.FilesStorageService;
 import com.example.admin.data.dto.EmployeeDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.ServletContext;
+import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
 import java.io.FileInputStream;
 
@@ -23,10 +22,6 @@ import java.io.FileInputStream;
 @RestController
 @RequestMapping(value = "/commonExport")
 public class ExportController {
-    @Autowired
-    FilesStorageService filesStorageService;
-    @Autowired
-    private ServletContext servletContext;
     @Autowired
     private EmployeeBusiness employeeBusiness;
 
@@ -38,20 +33,28 @@ public class ExportController {
                 EmployeeDTO employeeDTO = new EmployeeDTO();
                 file = employeeBusiness.exportData(employeeDTO);
                 break;
+            case "EMPLOYEE_MANAGER1":
+//                EmployeeDTO employeeDTO1 = new EmployeeDTO();
+//                file = employeeBusiness.exportData(employeeDTO1);
+                break;
             default:
         }
-        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
-        MediaType mediaType = getMediaTypeForFileName(servletContext, file.getName());
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getName() + "\"")
-                .contentType(mediaType)
-                .body(resource);
+        if (file != null) {
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+            MediaType mediaType = getMediaTypeForFileName(file.getName());
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getName() + "\"")
+                    .contentType(mediaType)
+                    .body(resource);
+        }
+        return null;
     }
 
-    private MediaType getMediaTypeForFileName(ServletContext servletContext, String fileName) {
-        String mineType = servletContext.getMimeType(fileName);
+    private MediaType getMediaTypeForFileName(String fileName) {
+        String mimeType = new MimetypesFileTypeMap().getContentType(fileName);
+        MediaType mediaType;
         try {
-            MediaType mediaType = MediaType.parseMediaType(mineType);
+            mediaType = MediaType.parseMediaType(mimeType);
             return mediaType;
         } catch (Exception e) {
             log.info(e.getMessage());

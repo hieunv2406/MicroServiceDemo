@@ -5,15 +5,12 @@ import com.example.admin.common.config.ConfigHeaderExport;
 import com.example.admin.common.utils.DataUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -25,7 +22,6 @@ import java.util.*;
 @Slf4j
 public class CommonExport {
 
-    private final static Locale locale = LocaleContextHolder.getLocale();
     public static final String XLSX_FILE_EXTENTION = ".xlsx";
     public static final String DOC_FILE_EXTENTION = ".doc";
     public static final String DOCX_FILE_EXTENTION = ".docx";
@@ -69,7 +65,15 @@ public class CommonExport {
             hssfWorkbook = new HSSFWorkbook();
 
             // <editor-fold defaultstate="collapsed" desc="Declare style">
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerFont.setFontHeightInPoints((short) 14);
+            headerFont.setColor(IndexedColors.RED.getIndex());
 
+            CellStyle cellStyleHeader = workbook.createCellStyle();
+            cellStyleHeader.setFont(headerFont);
+            cellStyleHeader.setFillBackgroundColor(IndexedColors.GREEN.getIndex());
+//            cellStyleHeader.setFillPattern(FillPatternType.NO_FILL);
             // </editor-fold>
 
             for (ConfigFileExport item : config) {
@@ -80,8 +84,9 @@ public class CommonExport {
                 } else {
                     sheet = workbook.createSheet(item.getSheetName());
                 }
-                //title
-                Row rowMainTitle = sheet.createRow(item.getCellTitleIndex());
+
+                //title sử lý title nhưng chưa merge cell
+                Row rowMainTitle = sheet.createRow(item.getCellTitleIndex()); //3
                 Cell cellMainTitle;
                 if (item.getCustomTitle() != null && item.getCustomTitle().length > 0) {
                     cellMainTitle = rowMainTitle.createCell(0);
@@ -92,7 +97,12 @@ public class CommonExport {
                 //sub title
                 int indexSubTitle = DataUtil.isNullOrEmpty(item.getSubTitle()) ? item.getCellTitleIndex() :
                         item.getCellTitleIndex() + 2;
-                Row rowSubTitle;
+                //bổ sung
+                Row rowSubTitle = sheet.createRow(indexSubTitle);
+                Cell cellSubTitle = rowSubTitle.createCell(4);
+                cellSubTitle.setCellValue(DataUtil.isNullOrEmpty(item.getSubTitle()) ? "" : I18n.getLanguage("language.common.subTitle", new Object[]{item.getSubTitle()}));
+
+
                 int indexRowData = 0;
 
                 // <editor-fold defaultstate="collapsed" desc="Build header">
@@ -139,7 +149,7 @@ public class CommonExport {
                                             }
                                         }
                                     }
-//                                    cellHeader.setCellStyle();
+                                    cellHeader.setCellStyle(cellStyleHeader);
                                     index++;
                                 }
                             } else {
@@ -162,7 +172,7 @@ public class CommonExport {
                                         index++;
                                     }
                                 }
-//                                cellHeader.setCellStyle();
+                                cellHeader.setCellStyle(cellStyleHeader);
                                 index++;
                             }
                         } else {
@@ -185,7 +195,7 @@ public class CommonExport {
                                     index++;
                                 }
                             }
-//                                cellHeader.setCellStyle();
+                            cellHeader.setCellStyle(cellStyleHeader);
                             index++;
                         }
                     }
@@ -281,7 +291,7 @@ public class CommonExport {
                                                     }
                                                 }
                                                 if ("NUMBER".equals(head.getStyleFormat())) {
-                                                    double numberValue = replateNumberValue(replace[0], m, more, s);
+                                                    double numberValue = replaceNumberValue(replace[0], m, more, s);
                                                     if (Double.compare(numberValue, -888) == 0) {
                                                         cell.setCellValue("*");
                                                     } else if (Double.compare(numberValue, -999) == 0) {
@@ -290,7 +300,7 @@ public class CommonExport {
                                                         cell.setCellValue(numberValue);
                                                     }
                                                 } else {
-                                                    cell.setCellValue(replateStringValue(replace[0], m, more, s));
+                                                    cell.setCellValue(replaceStringValue(replace[0], m, more, s));
                                                 }
                                                 s++;
                                             } else {
@@ -350,7 +360,7 @@ public class CommonExport {
                                                 }
                                             }
                                             if ("NUMBER".equals(head.getStyleFormat())) {
-                                                double numberValue = replateNumberValue(replace[0], valueReplace, more, m);
+                                                double numberValue = replaceNumberValue(replace[0], valueReplace, more, m);
                                                 if (Double.compare(numberValue, -888) == 0) {
                                                     cell.setCellValue("*");
                                                 } else if (Double.compare(numberValue, -999) == 0) {
@@ -359,7 +369,7 @@ public class CommonExport {
                                                     cell.setCellValue(numberValue);
                                                 }
                                             } else {
-                                                cell.setCellValue(replateStringValue(replace[0], valueReplace, more, m));
+                                                cell.setCellValue(replaceStringValue(replace[0], valueReplace, more, m));
                                             }
                                         } else {
                                             if ("NUMBER".equals(head.getStyleFormat())) {
@@ -414,7 +424,7 @@ public class CommonExport {
                                         }
                                     }
                                     if ("NUMBER".equals(head.getStyleFormat())) {
-                                        double numberValue = replateNumberValue(replace[0], valueReplace, more, i);
+                                        double numberValue = replaceNumberValue(replace[0], valueReplace, more, i);
                                         if (Double.compare(numberValue, -888) == 0) {
                                             cell.setCellValue("*");
                                         } else if (Double.compare(numberValue, -999) == 0) {
@@ -423,7 +433,7 @@ public class CommonExport {
                                             cell.setCellValue(numberValue);
                                         }
                                     } else {
-                                        cell.setCellValue(replateStringValue(replace[0], valueReplace, more, i));
+                                        cell.setCellValue(replaceStringValue(replace[0], valueReplace, more, i));
                                     }
                                 } else {
                                     if ("NUMBER".equals(head.getStyleFormat())) {
@@ -531,13 +541,11 @@ public class CommonExport {
         return new File(pathOut);
     }
 
-    public static double replateNumberValue(String modul, Object valueReplace, List<String> more, int index) {
-        double valueReturn = 0;
-        return valueReturn;
+    public static double replaceNumberValue(String module, Object valueReplace, List<String> more, int index) {
+        return 0;
     }
 
-    public static String replateStringValue(String modul, Object valueReplace, List<String> more, int index) {
-        String valueReturn = "";
-        return valueReturn;
+    public static String replaceStringValue(String module, Object valueReplace, List<String> more, int index) {
+        return "";
     }
 }

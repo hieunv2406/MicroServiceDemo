@@ -30,7 +30,7 @@ public class AdminServiceApplication {
     @Bean
     public LocaleResolver localeResolver() {
         AcceptHeaderLocaleResolver localeResolver = new AcceptHeaderLocaleResolver();
-        localeResolver.setDefaultLocale(new Locale("vi", "VN")); // Set default Locale as US
+        localeResolver.setDefaultLocale(new Locale("vi", "VN")); // Set default Locale
         return localeResolver;
     }
 

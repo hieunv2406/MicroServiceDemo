@@ -107,7 +107,7 @@ public class EmployeeBusinessImpl implements EmployeeBusiness {
                     , "genderStr"
                     , "address");
             fileNameOut = "EMPLOYEE_EXPORT";
-            subTitle = String.valueOf(new Date());
+            subTitle = DataUtil.convertDateToString(new Date());
         }
         Map<String, String> fieldSplit = new HashMap<>();
         ConfigFileExport configFileExport = new ConfigFileExport(
