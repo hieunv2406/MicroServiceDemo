@@ -7,6 +7,7 @@ import com.example.admin.common.config.ConfigFileExport;
 import com.example.admin.common.config.ConfigHeaderExport;
 import com.example.admin.common.dto.Datatable;
 import com.example.admin.common.dto.ResultInsideDTO;
+import com.example.admin.common.utils.DataUtil;
 import com.example.admin.data.dto.EmployeeDTO;
 import com.example.admin.repository.EmployeeRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -67,6 +68,17 @@ public class EmployeeBusinessImpl implements EmployeeBusiness {
     @Override
     public File exportData(EmployeeDTO employeeDTO) throws Exception {
         List<EmployeeDTO> employeeDTOList = employeeRepository.getListDataExport(employeeDTO);
+        for (EmployeeDTO dto : employeeDTOList) {
+            if (!DataUtil.isNullOrEmpty(dto.getGender())) {
+                if ("0".equals(String.valueOf(dto.getGender()))) {
+                    dto.setGenderStr(I18n.getLanguage("language.employee.gender.0"));
+                } else {
+                    dto.setGenderStr(I18n.getLanguage("language.employee.gender.1"));
+                }
+            } else {
+                dto.setGenderStr("N/A");
+            }
+        }
         return exportTemplate(employeeDTOList, "EXPORT");
     }
 
@@ -83,7 +95,7 @@ public class EmployeeBusinessImpl implements EmployeeBusiness {
                     , "fullName"
                     , "email"
                     , "birthday"
-                    , "gender"
+                    , "genderStr"
                     , "address");
             fileNameOut = "EMPLOYEE_RESULT_IMPORT";
         } else {
@@ -92,7 +104,7 @@ public class EmployeeBusinessImpl implements EmployeeBusiness {
                     , "fullName"
                     , "email"
                     , "birthday"
-                    , "gender"
+                    , "genderStr"
                     , "address");
             fileNameOut = "EMPLOYEE_EXPORT";
             subTitle = String.valueOf(new Date());

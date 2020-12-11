@@ -3,7 +3,7 @@ package com.example.admin.common.controller;
 import com.example.admin.business.EmployeeBusiness;
 import com.example.admin.common.service.FilesStorageService;
 import com.example.admin.data.dto.EmployeeDTO;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -19,7 +19,7 @@ import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.FileInputStream;
 
-@Log4j2
+@Slf4j
 @RestController
 @RequestMapping(value = "/commonExport")
 public class ExportController {
