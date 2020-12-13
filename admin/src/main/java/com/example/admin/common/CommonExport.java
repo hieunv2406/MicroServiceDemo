@@ -65,15 +65,24 @@ public class CommonExport {
             hssfWorkbook = new HSSFWorkbook();
 
             // <editor-fold defaultstate="collapsed" desc="Declare style">
+            //Header
+            CellStyle cellStyleHeader = workbook.createCellStyle();
+
+            //font
             Font headerFont = workbook.createFont();
             headerFont.setBold(true);
-            headerFont.setFontHeightInPoints((short) 14);
-            headerFont.setColor(IndexedColors.RED.getIndex());
-
-            CellStyle cellStyleHeader = workbook.createCellStyle();
+            headerFont.setFontHeightInPoints((short) 12);
+            headerFont.setColor(IndexedColors.BLACK.getIndex());
             cellStyleHeader.setFont(headerFont);
-            cellStyleHeader.setFillBackgroundColor(IndexedColors.GREEN.getIndex());
-//            cellStyleHeader.setFillPattern(FillPatternType.NO_FILL);
+            cellStyleHeader.setAlignment(HorizontalAlignment.CENTER);
+            //color
+//            cellStyleHeader.setFillBackgroundColor(IndexedColors.GREEN.getIndex());
+//            cellStyleHeader.setFillPattern(FillPatternType.BIG_SPOTS);
+            //border
+            cellStyleHeader.setBorderBottom(BorderStyle.THIN);
+            cellStyleHeader.setBorderTop(BorderStyle.THIN);
+            cellStyleHeader.setBorderLeft(BorderStyle.THIN);
+            cellStyleHeader.setBorderRight(BorderStyle.THIN);
             // </editor-fold>
 
             for (ConfigFileExport item : config) {
