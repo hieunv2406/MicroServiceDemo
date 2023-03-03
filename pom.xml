@@ -20,7 +20,7 @@
     </properties>
     <modules>
         <module>eurekaService</module>
-        <module>admin</module>
+        <module>baseService</module>
         <module>gatewayService</module>
     </modules>
     <dependencies>
